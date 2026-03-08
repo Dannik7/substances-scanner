@@ -1,0 +1,36 @@
+﻿<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Сканер</title>
+</head>
+<body>
+  <h3>Сканер</h3>
+  <button id="start">Запустить камеру</button>
+  <div id="reader" style="width:320px"></div>
+  <pre id="out"></pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/html5-qrcode"></script>
+  <script>
+    const out = document.getElementById('out');
+    const scanner = new Html5Qrcode("reader");
+
+    document.getElementById('start').onclick = async () => {
+      out.textContent = 'Запрашиваю камеру...';
+      try {
+        await scanner.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: 250 },
+          (text) => {
+            out.textContent = 'Сканировано: ' + text;
+            scanner.stop();
+          }
+        );
+      } catch (e) {
+        out.textContent = 'Ошибка камеры: ' + e;
+      }
+    };
+  </script>
+</body>
+</html>

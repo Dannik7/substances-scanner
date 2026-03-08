@@ -1,0 +1,49 @@
+﻿
+
+
+<!doctype html>
+<html>
+<body>
+  <input id="name" placeholder="Название">
+  <input id="barcode" placeholder="Штрихкод">
+  <input id="description" placeholder="Описание">
+  <button id="add">Добавить</button>
+  <pre id="out"></pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+       const SUPABASE_URL = "https://wnkltqbivfqtoyzremno.supabase.co"
+    const SUPABASE_KEY = "sb_publishable_b-VByvc6mEdKu39mQMe3Ag_u7dFKS3s"
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+    const out = document.getElementById('out')
+
+    document.getElementById('add').onclick = async () => {
+      const name = document.getElementById('name').value.trim()
+      const barcode = document.getElementById('barcode').value.trim()
+      const description = document.getElementById('description').value.trim()
+
+      if (!name || !barcode) {
+        out.textContent = 'Название и штрихкод обязательны'
+        return
+      }
+
+      const { data, error } = await sb
+        .from('substances')
+        .insert({
+          name,
+          barcode,
+          description
+        })
+        .select()
+
+      if (error) {
+        out.textContent = 'Ошибка: ' + error.message
+        return
+      }
+
+      out.textContent = 'Добавлено:\n' + JSON.stringify(data[0], null, 2)
+    }
+  </script>
+</body>
+</html>

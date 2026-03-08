@@ -1,0 +1,49 @@
+﻿<!doctype html>
+<html>
+<body>
+  <input id="barcode" placeholder="Штрихкод">
+  <button id="btn">Найти</button>
+  <pre id="out"></pre>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+     const SUPABASE_URL = "https://wnkltqbivfqtoyzremno.supabase.co"
+    const SUPABASE_KEY = "sb_publishable_b-VByvc6mEdKu39mQMe3Ag_u7dFKS3s"
+
+
+    const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+    const out = document.getElementById('out')
+    const barcodeInput = document.getElementById('barcode')
+
+    document.getElementById('btn').onclick = async () => {
+      const barcode = barcodeInput.value.trim()
+      out.textContent = 'Ищу...'
+
+      if (!barcode) {
+        out.textContent = 'Введите штрихкод.'
+        return
+      }
+
+      const { data, error } = await sb
+        .from('substances')
+        .select('id,name,barcode,description,created_at')
+        .eq('barcode', barcode)
+        .limit(1)
+
+      if (error) {
+        out.textContent = 'Ошибка: ' + error.message
+        return
+      }
+
+      if (!data || data.length === 0) {
+        out.textContent = 'Не найдено.'
+        return
+      }
+
+      out.textContent = JSON.stringify(data[0], null, 2)
+    }
+  </script>
+</body>
+</html>
+

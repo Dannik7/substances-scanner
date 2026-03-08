@@ -1,0 +1,31 @@
+﻿
+
+<!doctype html>
+<html>
+<body>
+  <button id="btn">Загрузить</button>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    // 1. СНАЧАЛА объявляем константы
+    const SUPABASE_URL = "https://wnkltqbivfqtoyzremno.supabase.co"
+    const SUPABASE_KEY = "sb_publishable_b-VByvc6mEdKu39mQMe3Ag_u7dFKS3s"
+
+    // 2. ПОТОМ создаём клиент
+    const sb = supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_KEY
+    )
+
+    // 3. И ТОЛЬКО ПОТОМ используем
+    document.getElementById('btn').onclick = async () => {
+      const { data, error } = await sb
+        .from('substances')
+        .select('id')
+
+      console.log(data, error)
+    }
+  </script>
+</body>
+</html>
