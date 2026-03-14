@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Сканер</title>
+
+
+<script src="https://unpkg.com/html5-qrcode"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+</head>
+<body>
+
+<h2>СКАНЕР</h2>
+
+<div id="reader" style="width:300px"></div>
+
+<div id="result"></div>
+
+<script>
+
+const SUPABASE_URL = "https://wnkltqbivfqtoyzremno.supabase.co"
+const SUPABASE_KEY = "sb_publishable_b-VByvc6mEdKu39mQMe3Ag_u7dFKS3s"
+
+const supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+
+async function searchBarcode(code){
+
+const { data, error } = await supabase
+.from("substances")
+.select("*")
+.eq("barcode", code)
+.limit(1)
+
+if(data.length === 0){
+document.getElementById("result").innerText = "Не найдено"
+}
+else{
+document.getElementById("result").innerText =
+data[0].name + " / " + data[0].description
+}
+
+}
+
+const scanner = new Html5Qrcode("reader")
+
+scanner.start(
+{ facingMode: "environment" },
+{ fps: 10, qrbox: 250 },
+
+(text) => {
+
+scanner.stop()
+
+searchBarcode(text)
+
+}
+
+)
+
+</script>
+
+</body>
+</html>
